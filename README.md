@@ -1,8 +1,6 @@
 Atividade de Rede de Computadores
 
 
-Atividade Prática 3 de Redes
-
 Conforme ilustrado na Figura 1, você deverá desenvolver uma calculadora distribuída (também chamado de Sistema de Operações Matemáticas Distribuída). Esse sistema é composto por:
 Cliente (Cliente 1 ou Cliente 2): permite a um usuário, através de uma interface de linha de comando (ou console/input), informar a operação e os dois valores. Solicita ao Servidor de Operações Distribuídas a execução da operação, e depois recebe o resultado dessa operação e imprime na tela do cliente;
 Servidor de Operações Distribuídas: recebe solicitações de operações (soma ou subtração) de um Cliente (Cliente 1 ou Cliente 2), encaminha a operação ao Servidor de Operação (Soma ou subtração) de acordo com a operação específica solicitada pelo cliente. Recebe o resultado dessa operação do Servidor de Operação e responde ao Cliente;
