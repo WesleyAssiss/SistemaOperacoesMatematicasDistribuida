@@ -1,51 +1,48 @@
-import socket  # Importa o módulo socket para trabalhar com comunicação em rede.
+import socket
 
-# Função para obter entrada do usuário com tratamento de exceção para KeyboardInterrupt
 def get_input(msg):
     while True:
         try:
-            entrada = input(msg)  # Solicita uma entrada do usuário com a mensagem 'msg'.
-            return entrada  # Retorna a entrada do usuário.
-        except KeyboardInterrupt:  # Captura a exceção caso o usuário pressione Ctrl+C (KeyboardInterrupt).
-            print("\nOperação cancelada.")  # Exibe uma mensagem informando o cancelamento da operação.
-            return None  # Retorna None para indicar que a operação foi cancelada.
+            entrada = input(msg)  # Exibe uma mensagem e aguarda a entrada do usuário.
+            return entrada
+        except KeyboardInterrupt:
+            print("\nOperação cancelada.")
+            return None
 
-# Função principal do terminal para interagir com o servidor
 def terminal(client):
     while True:
         try:
-            # Obter a operação desejada pelo usuário: soma, subtração ou sair
             operacao = get_input('Informe a operação soma (+) ou subtração (-) ou "sair" para encerrar:\n')
-            if operacao is None:  # Verifica se a operação é None (cancelada pelo usuário).
-                continue  # Retorna ao início do loop, solicitando novamente a operação.
+            if operacao is None:
+                continue
 
-            if operacao.lower() == 'sair':  # Verifica se a operação é 'sair' (opção para encerrar o programa).
-                client.send(operacao.encode())  # Envia a operação para o servidor, convertendo-a em bytes.
-                print(client.recv(2048).decode())  # Recebe a resposta do servidor e a imprime na tela.
-                break  # Sai do loop, encerrando o programa.
+            if operacao.lower() == 'sair':
+                client.send(operacao.encode())  # Envia a mensagem de sair para o servidor.
+                print(client.recv(2048).decode())  # Recebe e exibe a mensagem de confirmação do servidor.
+                break  # Encerra o loop de envio de mensagens.
 
-            if operacao not in ('+', '-'):  # Verifica se a operação não é válida (não é soma nem subtração).
-                print('Operação inválida. Use "+" para soma e "-" para subtração.')  # Exibe mensagem de erro.
-                continue  # Retorna ao início do loop, solicitando novamente a operação.
+            if operacao not in ('+', '-'):
+                print('Operação inválida. Use "+" para soma e "-" para subtração.')
+                continue
 
-            primeiro_valor = get_input('Digite o primeiro valor: ')  # Solicita o primeiro valor ao usuário.
-            if primeiro_valor is None:  # Verifica se o primeiro valor é None (cancelado pelo usuário).
-                continue  # Retorna ao início do loop, solicitando novamente o primeiro valor.
+            primeiro_valor = get_input('Digite o primeiro valor: ')
+            if primeiro_valor is None:
+                continue
 
-            segundo_valor = get_input('Digite o segundo valor: ')  # Solicita o segundo valor ao usuário.
-            if segundo_valor is None:  # Verifica se o segundo valor é None (cancelado pelo usuário).
-                continue  # Retorna ao início do loop, solicitando novamente o segundo valor.
+            segundo_valor = get_input('Digite o segundo valor: ')
+            if segundo_valor is None:
+                continue
 
-            entrada = f"{operacao},{primeiro_valor},{segundo_valor}"  # Concatena a operação e os valores em uma string.
-            client.send(entrada.encode())  # Envia a entrada para o servidor, convertendo-a em bytes.
-            print(client.recv(2048).decode())  # Recebe a resposta do servidor e a imprime na tela.
-        except:  # Captura qualquer exceção não especificada anteriormente.
-            print('Erro ao publicar mensagem.')  # Exibe mensagem de erro genérica.
+            entrada = f"{operacao},{primeiro_valor},{segundo_valor}"  # Cria a mensagem a ser enviada ao servidor.
+            client.send(entrada.encode())  # Envia a mensagem ao servidor.
+            print(client.recv(2048).decode())  # Recebe e exibe o resultado enviado pelo servidor.
+        except:
+            print('Erro ao publicar mensagem.')
 
 if __name__ == '__main__':
-    HOST = 'localhost'  # Define o endereço do servidor como localhost (máquina local).
-    PORTA = 50000  # Define a porta do servidor como 50000.
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Cria um novo socket TCP/IP.
-    client.connect((HOST, PORTA))  # Conecta o cliente ao servidor no endereço e porta especificados.
-    terminal(client)  # Chama a função terminal, passando o socket do cliente como argumento.
-    client.close()  # Fecha a conexão do cliente com o servidor.
+    HOST = 'localhost'
+    PORTA = 50000
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Cria o socket do cliente.
+    client.connect((HOST, PORTA))  # Conecta-se ao servidor.
+    terminal(client)  # Inicia a função de terminal para interação com o servidor.
+    client.close()  # Fecha o socket de conexão com o servidor após encerrar a interação.
