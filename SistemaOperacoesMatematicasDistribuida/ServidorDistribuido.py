@@ -13,29 +13,30 @@ def novo_cliente():
         print(f"Cliente conectado: {endereco}")
         threading.Thread(target=troca_mensagem, args=(cliente, endereco)).start()  # Cria uma thread para cada cliente conectado.
 
+# Função que trata a troca de mensagens entre o cliente e o servidor distribuído.
 def troca_mensagem(cliente, endereco):
     while True:
-        mensagem_decodificada = cliente.recv(2048).decode()
-        if mensagem_decodificada.lower() == 'sair':
-            cliente.send('Desconectando...'.encode())
-            cliente.close()
-            clientes.remove(cliente)
-            print("Cliente desconectado:", endereco)
-            break
+        mensagem_decodificada = cliente.recv(2048).decode()  # Recebe a mensagem do cliente e a decodifica de bytes para string.
 
+        if mensagem_decodificada.lower() == 'sair':  # Verifica se o cliente deseja desconectar.
+            cliente.send('Desconectando...'.encode())  # Envia uma mensagem de confirmação de desconexão para o cliente.
+            cliente.close()  # Fecha a conexão com o cliente.
+            clientes.remove(cliente)  # Remove o cliente da lista de clientes conectados.
+            print("Cliente desconectado:", endereco)  # Exibe no servidor que o cliente foi desconectado.
+            break  # Encerra o loop para finalizar a thread associada a esse cliente.
 
-        elif mensagem_decodificada.split(',')[0] == '+':
+        elif mensagem_decodificada.split(',')[0] == '+':  # Verifica se a operação é de adição.
 
-            resultado = servidor_soma(mensagem_decodificada)
-            cliente.send(resultado.encode())
+            resultado = servidor_soma(mensagem_decodificada)  # Chama a função "servidor_soma" para realizar a operação de soma.
+            cliente.send(resultado.encode())  # Envia o resultado da soma de volta para o cliente.
 
+        elif mensagem_decodificada.split(',')[0] == '-':  # Verifica se a operação é de subtração.
 
-        elif mensagem_decodificada.split(',')[0] == '-':
+            resultado = servidor_subtracao(mensagem_decodificada)  # Chama a função "servidor_subtracao" para realizar a operação de subtração.
+            cliente.send(resultado.encode())  # Envia o resultado da subtração de volta para o cliente.
 
-            resultado = servidor_subtracao(mensagem_decodificada)
-            cliente.send(resultado.encode())
         else:
-            cliente.send('Entrada não reconhecida.'.encode())  # Envia mensagem de erro para o cliente.
+            cliente.send('Entrada não reconhecida.'.encode())  # Se a operação não for reconhecida, envia uma mensagem de erro para o cliente.
 
 # Função que envia a mensagem contendo a operação de adição para o ServidorSoma
 def servidor_soma(msg):
